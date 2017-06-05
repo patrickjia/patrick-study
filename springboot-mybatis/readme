@@ -1,0 +1,5 @@
+项目介绍：
+1.使用了spring-boot框架搭建RESTful API
+2.结合mybatis进行数据库的查询
+3.数据库采用了mysql
+4.数据库连接池使用了druid
