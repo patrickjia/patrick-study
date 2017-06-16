@@ -8,6 +8,8 @@ public class ThreadTwo implements Runnable{
 		String threadName = Thread.currentThread().getName();
 		System.out.println(threadName +" start...");
 		
+		System.out.println(threadName+" Priority:"+Thread.currentThread().getPriority());
+		
 		System.out.println(threadName+" end.");
 	}
 
