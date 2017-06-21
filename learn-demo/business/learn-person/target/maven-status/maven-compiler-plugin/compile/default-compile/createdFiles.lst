@@ -1,0 +1,4 @@
+com/patrick/learn/person/entity/Person.class
+com/patrick/learn/person/service/IUserService.class
+com/patrick/learn/person/service/impl/UserServiceImpl.class
+com/patrick/learn/person/dao/IUserDao.class
