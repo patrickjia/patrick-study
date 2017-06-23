@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.patrick.learn.person.dao.IUserDao" >
+  <resultMap id="BaseResultMap" type="com.patrick.learn.person.entity.Person" >
+    <id column="PERSON_ID" property="personId" jdbcType="VARCHAR" />
+    <result column="PERSON_CODE" property="personCode" jdbcType="VARCHAR" />
+    <result column="PERSON_NAME" property="personName" jdbcType="VARCHAR" />
+    <result column="PERSON_TYPE" property="personType" jdbcType="VARCHAR" />
+    <result column="PERSON_PHOTO" property="personPhoto" jdbcType="VARCHAR" />
+    <result column="IS_ENABLED" property="isEnabled" jdbcType="VARCHAR" />
+    <result column="CERT_NO" property="certNo" jdbcType="VARCHAR" />
+    <result column="SEX" property="sex" jdbcType="VARCHAR" />
+    <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+    <result column="EMPLOY_NO" property="employNo" jdbcType="VARCHAR" />
+    <result column="RTX_CODE" property="rtxCode" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+    <result column="ZIP" property="zip" jdbcType="VARCHAR" />
+    <result column="CTR_PHONE" property="ctrPhone" jdbcType="VARCHAR" />
+    <result column="MOBILE_PHONE" property="mobilePhone" jdbcType="VARCHAR" />
+    <result column="FAX" property="fax" jdbcType="VARCHAR" />
+    <result column="APPCODE" property="appcode" jdbcType="VARCHAR" />
+    <result column="APPCODE_NAME" property="appcodeName" jdbcType="VARCHAR" />
+    <result column="SORT_ORDER" property="sortOrder" jdbcType="DECIMAL" />
+    <result column="LOGIN_NAME" property="loginName" jdbcType="VARCHAR" />
+    <result column="PWD" property="pwd" jdbcType="VARCHAR" />
+    <result column="CREATE_PERSON_ID" property="createPersonId" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATE_PERSON_ID" property="updatePersonId" jdbcType="VARCHAR" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  
+  
+  <sql id="Base_Column_List" >
+		a.PERSON_ID,
+        a.PERSON_CODE,
+        a.PERSON_NAME,
+        a.PERSON_TYPE,
+        a.IS_ENABLED,
+        a.CREATE_PERSON_ID,
+        a.CREATE_TIME,
+        a.UPDATE_PERSON_ID,
+        a.UPDATE_TIME,
+        a.CERT_NO,
+        a.SEX,
+        a.EMAIL,
+        a.EMPLOY_NO,
+        a.DESCRIPTION,
+        a.ADDRESS,
+        a.ZIP,
+        a.CTR_PHONE,
+        a.MOBILE_PHONE,
+        a.FAX,
+        a.APPCODE,
+        a.SORT_ORDER,
+        b.PERSON_PHOTO,
+        b.RTX_CODE,
+        b.LOGIN_NAME,
+        b.PWD
+  </sql>
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_PERSON_NORMAL a,T_PERSON b
+    where a.PERSON_ID = b.PERSON_ID
+    and a.PERSON_ID = #{personId,jdbcType=VARCHAR}
+  </select>
+ 
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+   	SELECT
+		a.PERSON_ID,
+		b.TYPE deptType,
+		c.DEPT_NAME deptCodeName,
+		c.DEPT_ID deptCode,
+		e.positionName,
+		e.position,
+		f.roleName,
+		f.roleId,
+		a.PERSON_CODE,
+		a.PERSON_NAME,
+		a.PERSON_TYPE,
+		a.IS_ENABLED,
+		a.CREATE_PERSON_ID,
+		a.CREATE_TIME,
+		a.UPDATE_PERSON_ID,
+		a.UPDATE_TIME,
+		a.CERT_NO,
+		a.SEX,
+		a.EMAIL,
+		a.EMPLOY_NO,
+		a.DESCRIPTION,
+		a.ADDRESS,
+		a.ZIP,
+		a.CTR_PHONE,
+		a.MOBILE_PHONE,
+		a.FAX,
+		a.APPCODE,
+		a.SORT_ORDER,
+		d.RTX_CODE,
+		d.PERSON_PHOTO,
+		d.LOGIN_NAME,
+		d.PWD,
+		c.DEPT_NAME APPCODE_NAME
+	FROM
+		T_PERSON_NORMAL a INNER JOIN T_PERSON d ON a.PERSON_ID = d.PERSON_ID
+	LEFT JOIN RE_PERSON_DEPT b ON a.PERSON_ID = b.PERSON_ID
+	LEFT JOIN T_DEPARTMENT c ON b.DEPT_ID = c.DEPT_ID
+	LEFT JOIN (
+		SELECT
+			a.PERSON_ID,
+			wm_concat(b.POSTION_NAME) AS positionName,
+			wm_concat(a.POSTION_ID) AS position
+		FROM
+			RE_PERSON_POSTION a,
+			T_POSTION b
+		WHERE
+			a.POSTION_ID = b.POSTION_ID
+		GROUP BY
+			a.PERSON_ID
+	) e ON a.PERSON_ID = e.PERSON_ID
+	LEFT JOIN (
+		SELECT
+			a.PERSON_ID,
+			wm_concat(b.ROLE_NAME) AS roleName,
+			wm_concat(a.ROLE_ID) AS roleId
+		FROM
+			RE_PERSON_ROLE a,
+			T_ROLE b
+		WHERE
+			a.ROLE_ID = b.ROLE_ID
+		GROUP BY
+			a.PERSON_ID
+	) f ON a.PERSON_ID = f.PERSON_ID
+	WHERE
+		a.IS_ENABLED = '0'
+	AND a.PERSON_ID = #{personId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.patrick.learn.person.entity.Person" >
+    SELECT
+		A.PERSON_ID,
+		b.deptCodeName,
+		b.deptCode,
+		A.PERSON_CODE,
+		A.PERSON_NAME,
+		A.PERSON_TYPE,
+		A.IS_ENABLED,
+		A.CERT_NO,
+		A.SEX,
+		A.EMAIL,
+		A.EMPLOY_NO,
+		A.DESCRIPTION,
+		A.ADDRESS,
+		A.ZIP,
+		A.CTR_PHONE,
+		A.MOBILE_PHONE,
+		A.FAX,
+		A.APPCODE,
+		A.SORT_ORDER,
+		d.RTX_CODE,
+        d.PERSON_PHOTO,
+		D.LOGIN_NAME
+	FROM
+		T_PERSON_NORMAL A LEFT JOIN T_PERSON D ON a.PERSON_ID = d.PERSON_ID
+		LEFT JOIN (
+        SELECT
+            a.PERSON_ID,
+            wm_concat(b.DEPT_ID) AS deptCode,
+            wm_concat(b.DEPT_NAME) AS deptCodeName
+        FROM
+            RE_PERSON_DEPT a,
+            T_DEPARTMENT b
+        WHERE
+            a.DEPT_ID = b.DEPT_ID
+        GROUP BY
+            a.PERSON_ID
+    ) b ON a.PERSON_ID = b.PERSON_ID
+	WHERE
+		A.PERSON_ID = D.PERSON_ID
+	AND A.IS_ENABLED = '0'
+    <if test="personId != null and personId != '' " >
+   		and  A.PERSON_ID = #{personId,jdbcType=VARCHAR}
+   	</if>
+   	<if test="personCode != null and personCode != '' " >
+   		and  lower(A.PERSON_CODE) like lower('%'|| #{personCode,jdbcType=VARCHAR}||'%')
+   	</if>
+   	<if test="personName != null and personName != '' " >
+   		and  lower(A.PERSON_NAME) like lower('%'|| #{personName,jdbcType=VARCHAR}||'%')
+   	</if>
+   	<if test="personType != null and personType != '' " >
+   		and  A.PERSON_TYPE = #{personType,jdbcType=VARCHAR}
+   	</if>
+   	<if test="appcode != null and appcode != '' " >
+   		and  lower(A.appcode) like lower('%'|| #{appcode,jdbcType=VARCHAR}||'%')
+   	</if>
+   	<if test="deptCodeName != null and deptCodeName != '' " >
+        and lower(b.deptCodeName) like lower('%'||#{deptCodeName,jdbcType=VARCHAR} ||'%')
+    </if>
+     ORDER BY A.SORT_ORDER ASC
+  </select>
+  
+  <select id="login" resultMap="BaseResultMap" parameterType="com.patrick.learn.person.entity.Person" >
+  	SELECT
+		a.PERSON_ID,
+		b.TYPE deptType,
+		c.DEPT_NAME deptCodeName,
+		c.DEPT_ID deptId,
+		c.DEPT_CODE deptCode,
+		e.positionName,
+		e.position,
+		f.roleName,
+		f.roleId,
+		a.PERSON_CODE,
+		a.PERSON_NAME,
+		a.PERSON_TYPE,
+		a.IS_ENABLED,
+		a.CREATE_PERSON_ID,
+		a.CREATE_TIME,
+		a.UPDATE_PERSON_ID,
+		a.UPDATE_TIME,
+		a.CERT_NO,
+		a.SEX,
+		a.EMAIL,
+		a.EMPLOY_NO,
+		a.DESCRIPTION,
+		a.ADDRESS,
+		a.ZIP,
+		a.CTR_PHONE,
+		a.MOBILE_PHONE,
+		a.FAX,
+		a.APPCODE,
+		a.SORT_ORDER,
+		d.LOGIN_NAME,
+		d.RTX_CODE,
+        d.PERSON_PHOTO,
+		d.PWD
+	FROM
+		T_PERSON_NORMAL a INNER JOIN T_PERSON d ON a.PERSON_ID = d.PERSON_ID
+	INNER JOIN RE_PERSON_DEPT b ON a.PERSON_ID = b.PERSON_ID
+	LEFT JOIN T_DEPARTMENT c ON b.DEPT_ID = c.DEPT_ID
+	LEFT JOIN (
+		SELECT
+			a.PERSON_ID,
+			wm_concat(b.POSTION_NAME) AS positionName,
+			wm_concat(a.POSTION_ID) AS position
+		FROM
+			RE_PERSON_POSTION a,
+			T_POSTION b
+		WHERE
+			a.POSTION_ID = b.POSTION_ID
+		GROUP BY
+			a.PERSON_ID
+	) e ON a.PERSON_ID = e.PERSON_ID
+	LEFT JOIN (
+		SELECT
+			a.PERSON_ID,
+			wm_concat(b.ROLE_NAME) AS roleName,
+			wm_concat(a.ROLE_ID) AS roleId
+		FROM
+			RE_PERSON_ROLE a,
+			T_ROLE b
+		WHERE
+			a.ROLE_ID = b.ROLE_ID
+		GROUP BY
+			a.PERSON_ID
+	) f ON a.PERSON_ID = f.PERSON_ID
+	WHERE
+		a.IS_ENABLED = '0'
+	AND b.type = '0'
+	AND d.LOGIN_NAME = #{loginName,jdbcType=VARCHAR}
+	AND d.PWD = #{pwd,jdbcType=VARCHAR}
+	AND ROWNUM = 1
+  </select>
+  
+  
+  <insert id="insertUserPersonNormal" parameterType="com.patrick.learn.person.entity.Person" >
+      INSERT INTO "T_PERSON_NORMAL" (
+			"PERSON_ID",
+			"CERT_NO",
+			"SEX",
+			"EMAIL",
+			"EMPLOY_NO",
+			"DESCRIPTION",
+			"ADDRESS",
+			"ZIP",
+			"CTR_PHONE",
+			"MOBILE_PHONE",
+			"FAX",
+			"APPCODE",
+			"SORT_ORDER",
+			"CREATE_PERSON_ID",
+			"CREATE_TIME",
+			"UPDATE_PERSON_ID",
+			"UPDATE_TIME",
+			"PERSON_CODE",
+			"PERSON_NAME",
+			"PERSON_TYPE",
+			"IS_ENABLED"
+		)VALUES(#{personId,jdbcType=VARCHAR},
+		#{certNo,jdbcType=VARCHAR},
+		#{sex,jdbcType=VARCHAR},
+		#{email,jdbcType=VARCHAR},
+		#{employNo,jdbcType=VARCHAR},
+		#{description,jdbcType=VARCHAR},
+		#{address,jdbcType=VARCHAR},
+		#{zip,jdbcType=VARCHAR},
+		#{ctrPhone,jdbcType=VARCHAR},
+		#{mobilePhone,jdbcType=VARCHAR},
+		#{fax,jdbcType=VARCHAR},
+		#{appcode,jdbcType=VARCHAR},
+		#{sortOrder,jdbcType=VARCHAR},
+		#{createPersonId,jdbcType=VARCHAR},
+		#{createTime,jdbcType=VARCHAR},
+		#{updatePersonId,jdbcType=VARCHAR},
+		#{updateTime,jdbcType=VARCHAR},
+		#{personCode,jdbcType=VARCHAR},
+		#{personName,jdbcType=VARCHAR},
+		#{personType,jdbcType=VARCHAR},
+		#{isEnabled,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertUser" parameterType="com.patrick.learn.person.entity.Person" >
+  	INSERT INTO "T_PERSON" ("PERSON_ID", "PERSON_TYPE", "CREATE_PERSON_ID", "CREATE_TIME", "UPDATE_PERSON_ID", "UPDATE_TIME", "LOGIN_NAME", "PWD","RTX_CODE","PERSON_PHOTO") 
+		VALUES (#{personId,jdbcType=VARCHAR}, #{personalType,jdbcType=VARCHAR}, #{createPersonId,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR},
+		 #{updatePersonId,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR}, #{loginName,jdbcType=VARCHAR}, #{pwd,jdbcType=VARCHAR}, #{rtxCode,jdbcType=VARCHAR}, #{personPhoto,jdbcType=VARCHAR})
+  </insert>
+  
+  
+  <update id="updateByPrimaryKey" parameterType="com.patrick.learn.person.entity.Person" >
+	 update T_PERSON
+    <set >
+      <if test="personType != null" >
+        PERSON_TYPE = #{personType,jdbcType=VARCHAR},
+      </if>
+      <if test="loginName != null" >
+        LOGIN_NAME = #{loginName,jdbcType=VARCHAR},
+      </if>
+      <if test="pwd != null" >
+        PWD = #{pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="rtxCode != null" >
+        RTX_CODE = #{rtxCode,jdbcType=VARCHAR},
+      </if>
+      <if test="personPhoto != null" >
+        PERSON_PHOTO = #{personPhoto,jdbcType=VARCHAR},
+      </if>
+      <if test="updatePersonId != null" >
+        UPDATE_PERSON_ID = #{updatePersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where PERSON_ID = #{personId,jdbcType=VARCHAR}                      
+  </update> 
+  
+  <update id="updateByPrimaryKeyPerson" parameterType="com.patrick.learn.person.entity.Person" >
+    update T_PERSON_NORMAL 
+    <set >
+      <if test="certNo != null" >
+        CERT_NO = #{certNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        SEX = #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        EMAIL = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="employNo != null" >
+        EMPLOY_NO = #{employNo,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        ADDRESS = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="zip != null" >
+        ZIP = #{zip,jdbcType=VARCHAR},
+      </if>
+      <if test="ctrPhone != null" >
+        CTR_PHONE = #{ctrPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="mobilePhone != null" >
+        MOBILE_PHONE = #{mobilePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="fax != null" >
+        FAX = #{fax,jdbcType=VARCHAR},
+      </if>
+      <if test="appcode != null" >
+        APPCODE = #{appcode,jdbcType=VARCHAR},
+      </if>
+      <if test="sortOrder != null" >
+        SORT_ORDER = #{sortOrder,jdbcType=VARCHAR},
+      </if>
+      <if test="personName != null" >
+        PERSON_NAME = #{personName,jdbcType=VARCHAR},
+      </if>
+      <if test="personType != null" >
+        PERSON_TYPE = #{personType,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnabled != null" >
+        IS_ENABLED = #{isEnabled,jdbcType=VARCHAR},
+      </if>
+      <if test="updatePersonId != null" >
+        UPDATE_PERSON_ID = #{updatePersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where PERSON_ID = #{personId,jdbcType=VARCHAR}                              
+  </update>   
+                                                              
+  <delete id="delteUserByPrimaryKey" parameterType="com.patrick.learn.person.entity.Person" >                   
+    delete from T_PERSON_NORMAL                                                               
+    where PERSON_ID = #{personId,jdbcType=VARCHAR}                                     
+  </delete>                                                                      
+                                                                    
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >                   
+    delete from T_PERSON                                                               
+    where PERSON_ID = #{personId,jdbcType=VARCHAR}                                     
+  </delete>    
+  
+</mapper>                                                                                                                                                                     
+                                                                                       
+                                                                                       		
+                                                                                       		
