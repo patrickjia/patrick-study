@@ -36,4 +36,7 @@ public class UserServiceImpl implements IUserService{
 		return null;
 	}
 
+	public List<Person> selectByCondition(Person person){
+		return userDao.selectByCondition(person);
+	}
 }

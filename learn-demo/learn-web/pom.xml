@@ -30,6 +30,19 @@
       <artifactId>learn-person</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
+    <!-- jsp start -->
+		<dependency>
+			<groupId>jstl</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>taglibs</groupId>
+			<artifactId>standard</artifactId>
+			<version>1.1.2</version>
+		</dependency>
+		<!-- jsp end -->
+    
   </dependencies>
   <build>
     <finalName>learn-web</finalName>
