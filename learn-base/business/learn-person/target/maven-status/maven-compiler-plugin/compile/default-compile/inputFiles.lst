@@ -1,0 +1,7 @@
+/Users/Patrick/Documents/workspace-learn/learn-base/business/learn-person/src/main/java/com/patrick/learn/person/App.java
+/Users/Patrick/Documents/workspace-learn/learn-base/business/learn-person/src/main/java/com/patrick/learn/entity/Person.java
+/Users/Patrick/Documents/workspace-learn/learn-base/business/learn-person/src/main/java/com/patrick/learn/dao/IUserDao.java
+/Users/Patrick/Documents/workspace-learn/learn-base/business/learn-person/src/main/java/com/patrick/learn/entity/BaseMenu.java
+/Users/Patrick/Documents/workspace-learn/learn-base/business/learn-person/src/main/java/com/patrick/learn/entity/PersonRole.java
+/Users/Patrick/Documents/workspace-learn/learn-base/business/learn-person/src/main/java/com/patrick/learn/service/IUserService.java
+/Users/Patrick/Documents/workspace-learn/learn-base/business/learn-person/src/main/java/com/patrick/learn/service/impl/UserServiceImpl.java

@@ -1,0 +1,8 @@
+com/patrick/learn/web/UserManagementController.class
+com/patrick/learn/web/RoleManagementController.class
+com/patrick/learn/web/DataDictionaryManagementController.class
+com/patrick/learn/web/MenuManagementController.class
+com/patrick/learn/web/DepartmentManagementController.class
+com/patrick/learn/web/SystemCodeManagementController.class
+com/patrick/learn/web/PositionManagementController.class
+com/patrick/learn/web/BusinessSystemManagementController.class

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.patrick.learn.dao.IFunctionDao" >
+  <resultMap id="BaseResultMap" type="com.patrick.learn.entity.Function" >
+    <id column="FUNCTION_ID" property="functionId" jdbcType="VARCHAR" />
+    <result column="FUNCTION_CODE" property="functionCode" jdbcType="VARCHAR" />
+    <result column="FUNCTION_NAME" property="functionName" jdbcType="VARCHAR" />
+    <result column="MENU_ID" property="menuId" jdbcType="VARCHAR" />
+    <result column="IS_ENABLED" property="isEnabled" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="APPCODE" property="appcode" jdbcType="VARCHAR" />
+    <result column="SORTORDER" property="sortorder" jdbcType="DECIMAL" />
+    <result column="CREATE_PERSON_ID" property="createPersonId" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATE_PERSON_ID" property="updatePersonId" jdbcType="VARCHAR" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    FUNCTION_ID, FUNCTION_CODE, FUNCTION_NAME, MENU_ID, IS_ENABLED, DESCRIPTION, APPCODE, 
+    SORTORDER, CREATE_PERSON_ID, CREATE_TIME, UPDATE_PERSON_ID, UPDATE_TIME
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_FUNCTION
+    where FUNCTION_ID = #{functionId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByMenuId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_FUNCTION
+    where MENU_ID = #{menuId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="checkFunctionCode" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_FUNCTION
+    where MENU_ID != #{menuId,jdbcType=VARCHAR} and FUNCTION_CODE in
+    <foreach item="tempId" collection="funcCode" open="(" separator="," close=")">
+        #{tempId}
+    </foreach>
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from T_FUNCTION
+    where FUNCTION_ID = #{functionId,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="deleteByMenuId" parameterType="java.lang.String" >
+    delete from T_FUNCTION
+    where MENU_ID = #{menuId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.patrick.learn.entity.Function" >
+    insert into T_FUNCTION (FUNCTION_ID, FUNCTION_CODE, FUNCTION_NAME, 
+      MENU_ID, IS_ENABLED, DESCRIPTION, 
+      APPCODE, SORTORDER, CREATE_PERSON_ID, 
+      CREATE_TIME, UPDATE_PERSON_ID, UPDATE_TIME
+      )
+    values (#{functionId,jdbcType=VARCHAR}, #{functionCode,jdbcType=VARCHAR}, #{functionName,jdbcType=VARCHAR}, 
+      #{menuId,jdbcType=VARCHAR}, #{isEnabled,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{appcode,jdbcType=VARCHAR}, #{sortorder,jdbcType=DECIMAL}, #{createPersonId,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updatePersonId,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.patrick.learn.entity.Function" >
+    insert into T_FUNCTION
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="functionId != null" >
+        FUNCTION_ID,
+      </if>
+      <if test="functionCode != null" >
+        FUNCTION_CODE,
+      </if>
+      <if test="functionName != null" >
+        FUNCTION_NAME,
+      </if>
+      <if test="menuId != null" >
+        MENU_ID,
+      </if>
+      <if test="isEnabled != null" >
+        IS_ENABLED,
+      </if>
+      <if test="description != null" >
+        DESCRIPTION,
+      </if>
+      <if test="appcode != null" >
+        APPCODE,
+      </if>
+      <if test="sortorder != null" >
+        SORTORDER,
+      </if>
+      <if test="createPersonId != null" >
+        CREATE_PERSON_ID,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="updatePersonId != null" >
+        UPDATE_PERSON_ID,
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="functionId != null" >
+        #{functionId,jdbcType=VARCHAR},
+      </if>
+      <if test="functionCode != null" >
+        #{functionCode,jdbcType=VARCHAR},
+      </if>
+      <if test="functionName != null" >
+        #{functionName,jdbcType=VARCHAR},
+      </if>
+      <if test="menuId != null" >
+        #{menuId,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnabled != null" >
+        #{isEnabled,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="appcode != null" >
+        #{appcode,jdbcType=VARCHAR},
+      </if>
+      <if test="sortorder != null" >
+        #{sortorder,jdbcType=DECIMAL},
+      </if>
+      <if test="createPersonId != null" >
+        #{createPersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePersonId != null" >
+        #{updatePersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.patrick.learn.entity.Function" >
+    update T_FUNCTION
+    <set >
+      <if test="functionCode != null" >
+        FUNCTION_CODE = #{functionCode,jdbcType=VARCHAR},
+      </if>
+      <if test="functionName != null" >
+        FUNCTION_NAME = #{functionName,jdbcType=VARCHAR},
+      </if>
+      <if test="menuId != null" >
+        MENU_ID = #{menuId,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnabled != null" >
+        IS_ENABLED = #{isEnabled,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="appcode != null" >
+        APPCODE = #{appcode,jdbcType=VARCHAR},
+      </if>
+      <if test="sortorder != null" >
+        SORTORDER = #{sortorder,jdbcType=DECIMAL},
+      </if>
+      <if test="createPersonId != null" >
+        CREATE_PERSON_ID = #{createPersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePersonId != null" >
+        UPDATE_PERSON_ID = #{updatePersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where FUNCTION_ID = #{functionId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.patrick.learn.entity.Function" >
+    update T_FUNCTION
+    set FUNCTION_CODE = #{functionCode,jdbcType=VARCHAR},
+      FUNCTION_NAME = #{functionName,jdbcType=VARCHAR},
+      MENU_ID = #{menuId,jdbcType=VARCHAR},
+      IS_ENABLED = #{isEnabled,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR},
+      APPCODE = #{appcode,jdbcType=VARCHAR},
+      SORTORDER = #{sortorder,jdbcType=DECIMAL},
+      CREATE_PERSON_ID = #{createPersonId,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      UPDATE_PERSON_ID = #{updatePersonId,jdbcType=VARCHAR},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
+    where FUNCTION_ID = #{functionId,jdbcType=VARCHAR}
+  </update>
+</mapper>

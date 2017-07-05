@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.patrick.learn.dao.IPositionDao" >
+  <resultMap id="BaseResultMap" type="com.patrick.learn.entity.Position" >
+    <id column="POSTION_ID" property="postId" jdbcType="VARCHAR" />
+    <result column="POSTION_CODE" property="postCode" jdbcType="VARCHAR" />
+    <result column="POSTION_NAME" property="postName" jdbcType="VARCHAR" />
+    <result column="IS_ENABLED" property="isEnabled" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="APPCODE" property="appcode" jdbcType="VARCHAR" />
+    <result column="APPCODE_NAME" property="appcodeName" jdbcType="VARCHAR" />
+    <result column="SORTORDER" property="sortorder" jdbcType="DECIMAL" />
+    <result column="CREATE_PERSON_ID" property="createPersonId" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATE_PERSON_ID" property="updatePersonId" jdbcType="VARCHAR" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    POSTION_ID,POSTION_CODE,POSTION_NAME, IS_ENABLED, DESCRIPTION, APPCODE, SORTORDER, CREATE_PERSON_ID, 
+    CREATE_TIME, UPDATE_PERSON_ID, UPDATE_TIME
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    SELECT
+		A.POSTION_ID,
+		A.POSTION_CODE,
+		A.POSTION_NAME,
+		A.IS_ENABLED,
+		A.DESCRIPTION,
+		A.APPCODE,
+		B.DEPT_NAME APPCODE_NAME,
+		A.SORTORDER,
+		A.CREATE_PERSON_ID,
+		A.CREATE_TIME,
+		A.UPDATE_PERSON_ID,
+		A.UPDATE_TIME
+	FROM
+		T_POSTION A LEFT JOIN
+		T_DEPARTMENT B
+	ON A.APPCODE = B.DEPT_CODE 
+	where A.POSTION_ID = #{postId,jdbcType=VARCHAR}
+  </select>
+   
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.patrick.learn.entity.Position" >
+    SELECT
+		A.POSTION_ID,
+		A.POSTION_CODE,
+		A.POSTION_NAME,
+		A.IS_ENABLED,
+		A.DESCRIPTION,
+		A.APPCODE,
+		B.DEPT_NAME APPCODE_NAME,
+		A.SORTORDER,
+		A.CREATE_PERSON_ID,
+		A.CREATE_TIME,
+		A.UPDATE_PERSON_ID,
+		A.UPDATE_TIME
+	FROM
+		T_POSTION A LEFT JOIN
+		T_DEPARTMENT B
+	ON A.APPCODE = B.DEPT_CODE 
+	WHERE 1=1 
+<!-- 	AND A.IS_ENABLED='0' -->
+    <if test="postId != null and postId!='' " >
+   		and  A.POSTION_ID = #{postId,jdbcType=VARCHAR}
+   	</if>
+   	<if test="postCode != null and postCode!='' " >
+   		and  A.POSTION_CODE = #{postCode,jdbcType=VARCHAR}
+   	</if>
+   	<if test="postName != null and postName!='' " >
+   		and  A.POSTION_NAME  LIKE concat(concat('%',#{postName}),'%')
+   	</if>
+   	<if test="appcode != null and appcode!='' " >
+   		and  A.APPCODE = #{appcode,jdbcType=VARCHAR}
+   	</if>
+   	ORDER BY A.SORTORDER ASC
+  </select>
+  
+  <select id="selectPostionByPerson" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    d.POSTION_ID, d.POSTION_CODE, d.POSTION_NAME, d.IS_ENABLED, d.DESCRIPTION, d.APPCODE, d.SORTORDER, d.CREATE_PERSON_ID, 
+    d.CREATE_TIME, d.UPDATE_PERSON_ID, d.UPDATE_TIME
+    from t_person p 
+	left join re_person_postion pd on p.person_id=pd.person_id 
+	left join  t_postion d on pd.postion_id=d.postion_id
+	where d.IS_ENABLED='0' and p.person_id = #{personId,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from T_POSTION
+    where POSTION_ID = #{postId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.patrick.learn.entity.Position" >
+    insert into T_POSTION (POSTION_ID, POSTION_CODE, POSTION_NAME, 
+      IS_ENABLED, DESCRIPTION, APPCODE, 
+      SORTORDER, CREATE_PERSON_ID, CREATE_TIME, 
+      UPDATE_PERSON_ID, UPDATE_TIME)
+    values (#{postId,jdbcType=VARCHAR}, #{postCode,jdbcType=VARCHAR}, #{postName,jdbcType=VARCHAR}, 
+      #{isEnabled,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{appcode,jdbcType=VARCHAR}, 
+      #{sortorder,jdbcType=DECIMAL}, #{createPersonId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updatePersonId,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.patrick.learn.entity.Position" >
+    insert into T_POSTION
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="postId != null" >
+        POSTION_ID,
+      </if>
+      <if test="postCode != null" >
+        POSTION_CODE,
+      </if>
+      <if test="postName != null" >
+        POSTION_NAME,
+      </if>
+      <if test="isEnabled != null" >
+        IS_ENABLED,
+      </if>
+      <if test="description != null" >
+        DESCRIPTION,
+      </if>
+      <if test="appcode != null" >
+        APPCODE,
+      </if>
+      <if test="sortorder != null" >
+        SORTORDER,
+      </if>
+      <if test="createPersonId != null" >
+        CREATE_PERSON_ID,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="updatePersonId != null" >
+        UPDATE_PERSON_ID,
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="postId != null" >
+        #{postId,jdbcType=VARCHAR},
+      </if>
+      <if test="postCode != null" >
+        #{postCode,jdbcType=VARCHAR},
+      </if>
+      <if test="postName != null" >
+        #{postName,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnabled != null" >
+        #{isEnabled,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="appcode != null" >
+        #{appcode,jdbcType=VARCHAR},
+      </if>
+      <if test="sortorder != null" >
+        #{sortorder,jdbcType=DECIMAL},
+      </if>
+      <if test="createPersonId != null" >
+        #{createPersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePersonId != null" >
+        #{updatePersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.patrick.learn.entity.Position" >
+    update T_POSTION
+    <set >
+      <if test="postName != null" >
+        POSTION_NAME = #{postName,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnabled != null" >
+        IS_ENABLED = #{isEnabled,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="appcode != null" >
+        APPCODE = #{appcode,jdbcType=VARCHAR},
+      </if>
+      <if test="sortorder != null" >
+        SORTORDER = #{sortorder,jdbcType=DECIMAL},
+      </if>
+      <if test="createPersonId != null" >
+        CREATE_PERSON_ID = #{createPersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePersonId != null" >
+        UPDATE_PERSON_ID = #{updatePersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where POSTION_ID = #{postId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.patrick.learn.entity.Position" >
+    update T_POSTION
+    set POSTION_CODE = #{postCode,jdbcType=VARCHAR},
+      POSTION_NAME = #{postName,jdbcType=VARCHAR},
+      IS_ENABLED = #{isEnabled,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR},
+      APPCODE = #{appcode,jdbcType=VARCHAR},
+      SORTORDER = #{sortorder,jdbcType=DECIMAL},
+      CREATE_PERSON_ID = #{createPersonId,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      UPDATE_PERSON_ID = #{updatePersonId,jdbcType=VARCHAR},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
+    where POSTION_ID = #{postId,jdbcType=VARCHAR}
+  </update>
+</mapper>

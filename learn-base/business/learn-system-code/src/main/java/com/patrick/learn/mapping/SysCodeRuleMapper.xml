@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.patrick.learn.dao.ISysCodeRuleDao" >
+  <resultMap id="BaseResultMap" type="com.patrick.learn.entity.SysCodeRule" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="PREFIX" property="prefix" jdbcType="VARCHAR" />
+    <result column="SUFFIX" property="suffix" jdbcType="VARCHAR" />
+    <result column="DATE_RULE" property="dateRule" jdbcType="INTEGER" />
+    <result column="DATE_SUFFIX" property="dateSuffix" jdbcType="VARCHAR" />
+    <result column="RESET_RULE" property="resetRule" jdbcType="INTEGER" />
+    <result column="START_NUM" property="startNum" jdbcType="INTEGER" />
+    <result column="LENGTH_NUM" property="lengthNum" jdbcType="INTEGER" />
+    <result column="LENGTH_STATIC" property="lengthStatic" jdbcType="INTEGER" />
+    <result column="CURRENT_NUM" property="currentNum" jdbcType="INTEGER" />
+    <result column="IS_ENABLED" property="isEnabled" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ID,NAME,PREFIX,SUFFIX,DATE_RULE,DATE_SUFFIX,RESET_RULE,
+	START_NUM,LENGTH_NUM,LENGTH_STATIC,CURRENT_NUM,IS_ENABLED
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_SYS_CODE_RULE
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.patrick.learn.entity.SysCodeRule" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_SYS_CODE_RULE
+    where IS_ENABLED ='0'
+    <if test="id != null and id!=''" >
+     	and  ID = #{id,jdbcType=VARCHAR}
+    </if>
+    <if test="name != null and name!='' " >
+   		and NAME like  '%'||#{name,jdbcType=VARCHAR}||'%'
+   	</if>
+  </select>
+  
+  <insert id="insert" parameterType="com.patrick.learn.entity.SysCodeRule" >
+   INSERT INTO T_SYS_CODE_RULE (
+   		ID,NAME,PREFIX,SUFFIX,DATE_RULE,DATE_SUFFIX,RESET_RULE,START_NUM,
+   		LENGTH_NUM,LENGTH_STATIC,CURRENT_NUM,IS_ENABLED
+	) VALUES (
+		#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{prefix,jdbcType=VARCHAR}, 
+      	#{suffix,jdbcType=VARCHAR}, #{dateRule,jdbcType=INTEGER}, #{dateSuffix,jdbcType=VARCHAR}, 
+      	#{resetRule,jdbcType=INTEGER},  #{startNum,jdbcType=INTEGER},  #{lengthNum,jdbcType=INTEGER},  #{lengthStatic,jdbcType=INTEGER}
+      	,  #{currentNum,jdbcType=INTEGER},  #{isEnabled,jdbcType=INTEGER}
+	)
+  </insert>
+  <insert id="insertSelective" parameterType="com.patrick.learn.entity.SysCodeRule" >
+    insert into T_SYS_CODE_RULE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="prefix != null" >
+        PREFIX,
+      </if>
+      <if test="suffix != null" >
+        SUFFIX,
+      </if>
+      <if test="dateRule != null" >
+        DATE_RULE,
+      </if>
+      <if test="dateSuffix != null" >
+        DATE_SUFFIX,
+      </if>
+      <if test="resetRule != null" >
+        RESET_RULE,
+      </if>
+      <if test="startNum != null" >
+        START_NUM,
+      </if>
+      <if test="lengthNum != null" >
+        LENGTH_NUM,
+      </if>
+      <if test="lengthStatic != null" >
+        LENGTH_STATIC,
+      </if>
+      <if test="currentNum != null" >
+        CURRENT_NUM,
+      </if>
+      <if test="isEnabled != null" >
+        IS_ENABLED,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="prefix != null" >
+        #{prefix,jdbcType=VARCHAR},
+      </if>
+      <if test="suffix != null" >
+        #{suffix,jdbcType=VARCHAR},
+      </if>
+      <if test="dateRule != null" >
+        #{dateRule,jdbcType=INTEGER},
+      </if>
+      <if test="dateSuffix != null" >
+        #{dateSuffix,jdbcType=VARCHAR},
+      </if>
+      <if test="resetRule != null" >
+        #{resetRule,jdbcType=INTEGER},
+      </if>
+      <if test="startNum != null" >
+        #{startNum,jdbcType=INTEGER},
+      </if>
+      <if test="lengthNum != null" >
+        #{lengthNum,jdbcType=INTEGER},
+      </if>
+      <if test="lengthStatic != null" >
+        #{lengthStatic,jdbcType=INTEGER},
+      </if>
+      <if test="currentNum != null" >
+        #{currentNum,jdbcType=INTEGER},
+      </if>
+      <if test="isEnabled != null" >
+        #{isEnabled,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.patrick.learn.entity.SysCodeRule" >
+    update T_SYS_CODE_RULE
+    <set >
+       <if test="id != null" >
+        ID = #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="prefix != null" >
+        PREFIX = #{prefix,jdbcType=VARCHAR},
+      </if>
+      <if test="suffix != null" >
+        SUFFIX = #{suffix,jdbcType=VARCHAR},
+      </if>
+      <if test="dateRule != null" >
+        DATE_RULE = #{dateRule,jdbcType=INTEGER},
+      </if>
+      <if test="dateSuffix != null" >
+        DATE_SUFFIX = #{dateSuffix,jdbcType=VARCHAR},
+      </if>
+      <if test="resetRule != null" >
+        RESET_RULE = #{resetRule,jdbcType=INTEGER},
+      </if>
+      <if test="startNum != null" >
+        START_NUM = #{startNum,jdbcType=INTEGER},
+      </if>
+      <if test="lengthNum != null" >
+        LENGTH_NUM = #{lengthNum,jdbcType=INTEGER},
+      </if>
+      <if test="lengthStatic != null" >
+        LENGTH_STATIC = #{lengthStatic,jdbcType=INTEGER},
+      </if>
+      <if test="currentNum != null" >
+        CURRENT_NUM = #{currentNum,jdbcType=INTEGER},
+      </if>
+      <if test="isEnabled != null" >
+        IS_ENABLED = #{isEnabled,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

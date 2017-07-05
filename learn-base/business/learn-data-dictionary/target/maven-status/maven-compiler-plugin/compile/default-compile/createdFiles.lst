@@ -1,0 +1,4 @@
+com/patrick/learn/dao/ISysParamDao.class
+com/patrick/learn/entity/SysParam.class
+com/patrick/learn/service/impl/SysParamServiceImpl.class
+com/patrick/learn/service/ISysParamService.class

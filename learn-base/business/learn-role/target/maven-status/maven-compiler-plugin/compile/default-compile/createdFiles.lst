@@ -1,0 +1,8 @@
+com/patrick/learn/dao/IRoleMenuDao.class
+com/patrick/learn/service/impl/RoleServiceImpl.class
+com/patrick/learn/dao/IRoleGroupDao.class
+com/patrick/learn/dao/IRoleDao.class
+com/patrick/learn/service/IRoleService.class
+com/patrick/learn/entity/RoleGroup.class
+com/patrick/learn/entity/RoleMenu.class
+com/patrick/learn/entity/Role.class

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+							http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+							http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+							http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+							http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+">
+<!---->
+	<bean id="datasource-edw" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close" lazy-init="false">
+	    <property name="url" value="${db.baseapi.url}" />
+	    <property name="username" value="${db.baseapi.username}" />
+	    <property name="password" value="${db.baseapi.password}" />
+	    
+	    <property name="driverClassName" value="${db.baseapi.driver}" />
+		<property name="maxActive" value="${db.baseapi.maxActive}" />
+		<property name="minIdle" value="${db.baseapi.minIdle}" />
+		<property name="initialSize" value="${db.baseapi.initialSize}" />
+		<property name="maxWait" value="${db.baseapi.maxWait}" />
+	</bean>
+	
+	<!-- was jndi 
+ 	<bean id="datasource-edw" class="org.springframework.jndi.JndiObjectFactoryBean">
+ 		<property name="jndiName" value="jndi_wicbase"/>
+ 	</bean>
+	-->
+	<bean id="sqlSessionFactory-edw" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="classpath:configuration/mybatis-config.xml" />
+		<property name="dataSource" ref="datasource-edw" />
+		<property name="mapperLocations" value="classpath*:com/patrick/learn/mapping/*Mapper.xml" />
+	</bean>
+    
+    <!-- 自动扫描mapper -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+	    <property name="basePackage" value="com.patrick.learn.dao" />
+	    <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory-edw" />
+	</bean>
+
+	<!-- 事务管理器 -->
+	<bean id="datasource-transaction-manager-edw" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="datasource-edw" />
+	</bean>
+	<!-- 开启事务注解驱动 -->
+	<tx:annotation-driven transaction-manager="datasource-transaction-manager-edw" mode="proxy" proxy-target-class="false" />
+
+</beans>
+
+
+
+
+
+
+
+

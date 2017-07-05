@@ -1,0 +1,8 @@
+/Users/Patrick/Documents/workspace-learn/learn-base/business/learn-role/src/main/java/com/patrick/learn/service/IRoleService.java
+/Users/Patrick/Documents/workspace-learn/learn-base/business/learn-role/src/main/java/com/patrick/learn/entity/RoleGroup.java
+/Users/Patrick/Documents/workspace-learn/learn-base/business/learn-role/src/main/java/com/patrick/learn/dao/IRoleMenuDao.java
+/Users/Patrick/Documents/workspace-learn/learn-base/business/learn-role/src/main/java/com/patrick/learn/entity/RoleMenu.java
+/Users/Patrick/Documents/workspace-learn/learn-base/business/learn-role/src/main/java/com/patrick/learn/dao/IRoleDao.java
+/Users/Patrick/Documents/workspace-learn/learn-base/business/learn-role/src/main/java/com/patrick/learn/entity/Role.java
+/Users/Patrick/Documents/workspace-learn/learn-base/business/learn-role/src/main/java/com/patrick/learn/service/impl/RoleServiceImpl.java
+/Users/Patrick/Documents/workspace-learn/learn-base/business/learn-role/src/main/java/com/patrick/learn/dao/IRoleGroupDao.java
