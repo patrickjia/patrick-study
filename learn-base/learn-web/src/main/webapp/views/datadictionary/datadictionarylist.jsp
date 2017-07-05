@@ -227,7 +227,11 @@ layui.use('form', function(){
 				  chk_value.push($(this).val()); 
 				  }); 
 				  if(chk_value.length==0){
-					  alert('你还没有选择任何内容！');
+					  layer.msg('你还没有选择任何内容！', {
+				          time: 10000, //20s后自动关闭
+				          btnAlign: 'c',
+				          btn: ['确定']
+				      });
 					  return false;
 				  }
 				  if(btnId=='updateBtn'){

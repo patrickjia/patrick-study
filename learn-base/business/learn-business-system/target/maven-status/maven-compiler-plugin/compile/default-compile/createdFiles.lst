@@ -1,4 +1,4 @@
-com/patrick/learn/service/IBusSystemService.class
 com/patrick/learn/entity/BusSystem.class
 com/patrick/learn/service/impl/IBusSystemServiceImpl.class
+com/patrick/learn/service/IBusSystemService.class
 com/patrick/learn/dao/IBusSystemDao.class

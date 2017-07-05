@@ -28,11 +28,11 @@
   
 </head>
 <body>
-<div class="layui-layout layui-layout-admin">
+<div class="layui-layout layui-layout-admin ">
   <div class="layui-header header header-index"> 
  <div class="layui-main">             
 <ul class="layui-nav">
-  <li class="layui-nav-item" style="width: 1200px"><a href="">JAVA基础支撑平台</a></li>
+  <li class="layui-nav-item layui-bg-cyan" style="width: 1200px"><a href="">JAVA基础支撑平台</a></li>
   <!-- <li class="layui-nav-item" style="width:400px"><a href="">首页</a></li>
   -->
   <%-- <li class="layui-nav-item ">
@@ -71,7 +71,7 @@
 
 <div class="layui-side layui-bg-black">
     <div class="layui-side-scroll">
-<ul class="layui-nav layui-nav-tree site-demo-nav">
+<ul class="layui-nav layui-nav-tree site-demo-nav layui-bg-blue">
   <li class="layui-nav-item layui-nav-itemed">
     <a href="javascript:;">系统管理</a>
     <dl class="layui-nav-child">
@@ -140,10 +140,10 @@
 		
 		<table class="layui-table" lay-even="" lay-skin="row">
 		  <colgroup>
-		  	<col width="100">
-		    <col width="150">
+		  	<col width="50">
 		    <col width="150">
 		    <col width="200">
+		    <col width="300">
 		    <col>
 		  </colgroup>
 		  <thead>
@@ -159,7 +159,7 @@
 		  <tbody>
 		  <c:forEach items="${busisystems }" var="bussystem">
 				<tr id="tr_${bussystem.busSysId }">
-					<td ><input type="checkbox" name="personId" lay-skin="primary" value="${user.personId }"></td>
+					<td ><input type="checkbox" name="busSystemId" lay-skin="primary" value="${bussystem.busSysId}"></td>
 					<td>${bussystem.busSysCode }</td>
 					<td>${bussystem.busSysName }</td>
 					<td>${bussystem.appcodeName }</td>
@@ -223,22 +223,30 @@ layui.use('form', function(){
 		    	//alert(btnId);
 		    	var title = '';
 		    	var chk_value =[]; 
+		    	var operFlag='';
 		    	if(btnId=='updateBtn'|btnId=='viewBtn'){
-				  $('input[name="personId"]:checked').each(function(){ 
+				  $('input[name="busSystemId"]:checked').each(function(){ 
 				  chk_value.push($(this).val()); 
 				  }); 
 				  if(chk_value.length==0){
-					  alert('你还没有选择任何内容！');
+					  //alert('你还没有选择任何内容！');
+					  layer.msg('你还没有选择任何内容！', {
+				          time: 10000, //20s后自动关闭
+				          btnAlign: 'c',
+				          btn: ['确定']
+				      });
 					  return false;
 				  }
 				  if(btnId=='updateBtn'){
 					  title = '修改业务系统';
+					  operFlag='U';
 				  }
 				  if(btnId=='viewBtn'){
 					  title = '查看业务系统';
 				  }
 		    	}else{
 		    		title = '新增业务系统';
+		    		operFlag='A';
 		    	}
 				  //alert(chk_value); 
 		    	
@@ -250,11 +258,11 @@ layui.use('form', function(){
 				  area: ['700px', '550px'],
 				  fixed: false, //不固定
 				  maxmin: true,
-				  content: '${basePath}user/viewuser?personId='+chk_value
+				  content: '${basePath}businesssystem/viewbusinesssystem?operFlag='+operFlag+'&busSystemId='+chk_value
 				});
 		    },confirmTrans: function(){
 		        //配置一个透明的询问框
-		        layer.msg('您要做删除<br>xx记录吗', {
+		        layer.msg('您要做删除该记录吗', {
 		          time: 20000, //20s后自动关闭
 		          btn: ['确定', '取消']
 		        });

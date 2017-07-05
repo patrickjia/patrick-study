@@ -7,6 +7,9 @@
         <dependent-module archiveName="learn-department-0.0.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/learn-department/learn-department">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="learn-business-system-0.0.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/learn-business-system/learn-business-system">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="learn-web"/>
         <property name="java-output-path" value="/learn-web/target/classes"/>
     </wb-module>
