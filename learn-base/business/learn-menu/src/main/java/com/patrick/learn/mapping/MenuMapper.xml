@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.patrick.learn.dao.IMenuDao" >
+  <resultMap id="BaseResultMap" type="com.patrick.learn.entity.Menu" >
+    <id column="MENU_ID" property="menuId" jdbcType="VARCHAR" />
+    <result column="MENU_CODE" property="menuCode" jdbcType="VARCHAR" />
+    <result column="MENU_NAME" property="menuName" jdbcType="VARCHAR" />
+    <result column="IS_ENABLED" property="isEnabled" jdbcType="VARCHAR" />
+    <result column="IS_CHILD_NODE" property="isChildNode" jdbcType="VARCHAR" />
+    <result column="SUPERIOR_MENU_ID" property="superiorMenuId" jdbcType="VARCHAR" />
+    <result column="MENU_URL" property="menuUrl" jdbcType="VARCHAR" />
+    <result column="MENU_BACK_URL" property="menuBackUrl" jdbcType="VARCHAR" />
+    <result column="MENU_ICON" property="menuIcon" jdbcType="VARCHAR" />
+    <result column="PATH" property="path" jdbcType="VARCHAR" />
+    <result column="BUS_SYS_CODE" property="busSysCode" jdbcType="VARCHAR" />
+    <result column="BUS_SYS_NAME" property="busSysName" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="APPCODE" property="appcode" jdbcType="VARCHAR" />
+    <result column="APPCODE_NAME" property="appcodeName" jdbcType="VARCHAR" />
+    <result column="SORTORDER" property="sortorder" jdbcType="DECIMAL" />
+    <result column="CREATE_PERSON_ID" property="createPersonId" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATE_PERSON_ID" property="updatePersonId" jdbcType="VARCHAR" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    MENU_ID, MENU_CODE, MENU_NAME, IS_ENABLED, IS_CHILD_NODE, SUPERIOR_MENU_ID, MENU_URL,MENU_BACK_URL,MENU_ICON 
+    PATH, BUS_SYS_CODE, DESCRIPTION, APPCODE, SORTORDER, CREATE_PERSON_ID, CREATE_TIME, 
+    UPDATE_PERSON_ID, UPDATE_TIME
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+        A.MENU_ID,
+        A.MENU_CODE,
+        A.MENU_NAME,
+        A.IS_ENABLED,
+        A.IS_CHILD_NODE,
+        A.SUPERIOR_MENU_ID,
+        A.MENU_URL,
+        A.MENU_BACK_URL,
+        A.MENU_ICON,
+        A.BUS_SYS_CODE,
+        A.DESCRIPTION,
+        A.APPCODE,
+        A.SORTORDER,
+        A.CREATE_PERSON_ID,
+        A.CREATE_TIME,
+        A.UPDATE_PERSON_ID,
+        A.UPDATE_TIME,
+        b.DEPT_NAME APPCODE_NAME
+    from T_MENU A,T_DEPARTMENT b
+    WHERE
+        A.APPCODE = b.DEPT_CODE
+    AND A.MENU_ID = #{menuId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByMenuCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    A.MENU_ID,
+    A.MENU_CODE,
+    A.MENU_NAME,
+    A.IS_ENABLED,
+    A.IS_CHILD_NODE,
+    A.SUPERIOR_MENU_ID,
+    A.MENU_URL,
+    A.MENU_BACK_URL,
+    A.MENU_ICON,
+    A.PATH,
+    A.BUS_SYS_CODE,
+    A.DESCRIPTION,
+    A.APPCODE,
+    A.SORTORDER,
+    A.CREATE_PERSON_ID,
+    A.CREATE_TIME,
+    A.UPDATE_PERSON_ID,
+    A.UPDATE_TIME,
+    b.DEPT_NAME APPCODE_NAME
+    from T_MENU A LEFT JOIN T_DEPARTMENT b
+    ON A.APPCODE = b.DEPT_CODE
+    WHERE A.MENU_CODE = #{menuCode,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectMenuTree"  resultMap="BaseResultMap" parameterType="com.patrick.learn.entity.Menu">
+    SELECT
+        a.MENU_ID,
+        a.MENU_CODE,
+        a.MENU_NAME,
+        a.IS_CHILD_NODE,
+        CASE a.SUPERIOR_MENU_ID WHEN '-1' THEN e.BUS_SYS_CODE
+        ELSE a.SUPERIOR_MENU_ID END SUPERIOR_MENU_ID,
+        a.MENU_URL,
+        a.BUS_SYS_CODE,
+        a.SORTORDER
+        ,e.BUS_SYS_NAME
+    FROM
+        T_MENU a,RE_ROLE_MENU b,T_PERSON_NORMAL c,RE_PERSON_ROLE d,T_BUS_SYSTEM_INFO e
+    WHERE
+    a.MENU_ID = b.MENU_ID       
+    and b.ROLE_ID = d.ROLE_ID
+    and c.PERSON_ID = d.PERSON_ID
+    and a.BUS_SYS_CODE = e.BUS_SYS_CODE
+    AND a.IS_ENABLED = '0'
+    AND e.IS_ENABLED = '0'
+    <if test="appcode!= null and appcode !='' " >
+        and  a.APPCODE = #{appcode,jdbcType=VARCHAR}
+    </if>
+    <if test="busSysCode!= null and busSysCode !='' " >
+        and  a.BUS_SYS_CODE = #{busSysCode,jdbcType=VARCHAR}
+    </if>
+    <if test="personId!= null and personId !='' " >
+        and  d.PERSON_ID = #{personId,jdbcType=VARCHAR}
+    </if>
+    START WITH a.SUPERIOR_MENU_ID = '-1' CONNECT BY NOCYCLE PRIOR a.MENU_ID = a.SUPERIOR_MENU_ID
+    <!-- union 系统跟节点 -->
+    UNION 
+    SELECT
+        e.BUS_SYS_CODE,
+        e.BUS_SYS_CODE,
+        e.BUS_SYS_NAME,
+        '0',
+        '0',
+        '',
+        e.BUS_SYS_CODE,
+        0,
+        e.BUS_SYS_NAME
+    FROM
+        T_MENU a,RE_ROLE_MENU b,T_PERSON_NORMAL c,RE_PERSON_ROLE d,T_BUS_SYSTEM_INFO e
+    WHERE
+    a.MENU_ID = b.MENU_ID       
+    and b.ROLE_ID = d.ROLE_ID
+    and c.PERSON_ID = d.PERSON_ID
+    and a.BUS_SYS_CODE = e.BUS_SYS_CODE
+    AND a.IS_ENABLED = '0'
+    AND e.IS_ENABLED = '0'
+    <if test="appcode!= null and appcode !='' " >
+        and  a.APPCODE = #{appcode,jdbcType=VARCHAR}
+    </if>
+    <if test="busSysCode!= null and busSysCode !='' " >
+        and  a.BUS_SYS_CODE = #{busSysCode,jdbcType=VARCHAR}
+    </if>
+    <if test="personId!= null and personId !='' " >
+        and  d.PERSON_ID = #{personId,jdbcType=VARCHAR}
+    </if>
+    GROUP BY e.BUS_SYS_CODE,e.BUS_SYS_NAME
+    
+  </select>
+  
+   <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.patrick.learn.entity.Menu" >
+    select 
+        a.MENU_ID, 
+        a.MENU_CODE, 
+        a.MENU_NAME, 
+        a.MENU_ICON,
+        a.MENU_BACK_URL,
+        a.IS_ENABLED, 
+        a.IS_CHILD_NODE, 
+        a.SUPERIOR_MENU_ID, 
+        a.MENU_URL,
+        a.BUS_SYS_CODE, 
+        a.DESCRIPTION, 
+        a.APPCODE, 
+        a.SORTORDER,
+        b.BUS_SYS_NAME
+    from T_MENU a LEFT JOIN
+         T_BUS_SYSTEM_INFO b
+    ON a.BUS_SYS_CODE = b.BUS_SYS_CODE
+    WHERE 1=1
+    <if test="menuId != null and menuId!='' " >
+        and  a.MENU_ID = #{menuId,jdbcType=VARCHAR}
+    </if>
+    <if test="menuCode != null and menuCode!='' " >
+        and a.MENU_CODE = #{menuCode,jdbcType=VARCHAR}
+    </if>
+    <if test="menuName != null and menuName!='' " >
+        and  lower(a.MENU_NAME) like lower('%'||#{menuName,jdbcType=VARCHAR}||'%')
+    </if>
+    <if test="superiorMenuId!= null and superiorMenuId !='' " >
+        and (a.SUPERIOR_MENU_ID = #{superiorMenuId,jdbcType=VARCHAR}
+            or a.MENU_ID = #{superiorMenuId,jdbcType=VARCHAR})
+    </if>
+    <if test="appcode!= null and appcode !='' " >
+        and  a.APPCODE = #{appcode,jdbcType=VARCHAR}
+    </if>
+    <if test="busSysCode!= null and busSysCode !='' " >
+        and  a.BUS_SYS_CODE = #{busSysCode,jdbcType=VARCHAR}
+        and  b.BUS_SYS_CODE = #{busSysCode,jdbcType=VARCHAR}
+    </if>
+    ORDER BY a.SORTORDER ASC
+  </select>
+  
+  
+  <update id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    update T_MENU set IS_ENABLED = 1
+    where MENU_ID in
+    (SELECT
+        MENU_ID
+    FROM
+        T_MENU A
+         START WITH MENU_ID = #{menuId,jdbcType=VARCHAR} CONNECT BY NOCYCLE PRIOR MENU_ID = SUPERIOR_MENU_ID)
+  </update>
+  <insert id="insert" parameterType="com.patrick.learn.entity.Menu" >
+    insert into T_MENU (MENU_ID, MENU_CODE, MENU_NAME,MENU_ICON,MENU_BACK_URL, 
+      IS_ENABLED, IS_CHILD_NODE, SUPERIOR_MENU_ID, 
+      MENU_URL, PATH, BUS_SYS_CODE, 
+      DESCRIPTION, APPCODE, SORTORDER, 
+      CREATE_PERSON_ID, CREATE_TIME, UPDATE_PERSON_ID, 
+      UPDATE_TIME)
+    values (#{menuId,jdbcType=VARCHAR}, #{menuCode,jdbcType=VARCHAR}, #{menuName,jdbcType=VARCHAR}, 
+      #{menuIcon,jdbcType=VARCHAR}, #{menuBackUrl,jdbcType=VARCHAR}, 
+      #{isEnabled,jdbcType=VARCHAR}, #{isChildNode,jdbcType=VARCHAR}, #{superiorMenuId,jdbcType=VARCHAR}, 
+      #{menuUrl,jdbcType=VARCHAR}, #{path,jdbcType=VARCHAR}, #{busSysCode,jdbcType=VARCHAR}, 
+      #{description,jdbcType=VARCHAR}, #{appcode,jdbcType=VARCHAR}, #{sortorder,jdbcType=DECIMAL}, 
+      #{createPersonId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updatePersonId,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.patrick.learn.entity.Menu" >
+    insert into T_MENU
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="menuId != null" >
+        MENU_ID,
+      </if>
+      <if test="menuCode != null" >
+        MENU_CODE,
+      </if>
+      <if test="menuName != null" >
+        MENU_NAME,
+      </if>
+      <if test="menuIcon != null" >
+        MENU_ICON,
+      </if>
+      <if test="menuBackUrl != null" >
+        MENU_BACK_URL,
+      </if>
+      <if test="isEnabled != null" >
+        IS_ENABLED,
+      </if>
+      <if test="isChildNode != null" >
+        IS_CHILD_NODE,
+      </if>
+      <if test="superiorMenuId != null" >
+        SUPERIOR_MENU_ID,
+      </if>
+      <if test="menuUrl != null" >
+        MENU_URL,
+      </if>
+      <if test="path != null" >
+        PATH,
+      </if>
+      <if test="busSysCode != null" >
+        BUS_SYS_CODE,
+      </if>
+      <if test="description != null" >
+        DESCRIPTION,
+      </if>
+      <if test="appcode != null" >
+        APPCODE,
+      </if>
+      <if test="sortorder != null" >
+        SORTORDER,
+      </if>
+      <if test="createPersonId != null" >
+        CREATE_PERSON_ID,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="updatePersonId != null" >
+        UPDATE_PERSON_ID,
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="menuId != null" >
+        #{menuId,jdbcType=VARCHAR},
+      </if>
+      <if test="menuCode != null" >
+        #{menuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="menuName != null" >
+        #{menuName,jdbcType=VARCHAR},
+      </if>
+      <if test="menuIcon != null" >
+        #{menuIcon,jdbcType=VARCHAR},
+      </if>
+      <if test="menuBackUrl != null" >
+        #{menuBackUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnabled != null" >
+        #{isEnabled,jdbcType=VARCHAR},
+      </if>
+      <if test="isChildNode != null" >
+        #{isChildNode,jdbcType=VARCHAR},
+      </if>
+      <if test="superiorMenuId != null" >
+        #{superiorMenuId,jdbcType=VARCHAR},
+      </if>
+      <if test="menuUrl != null" >
+        #{menuUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null" >
+        #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="busSysCode != null" >
+        #{busSysCode,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="appcode != null" >
+        #{appcode,jdbcType=VARCHAR},
+      </if>
+      <if test="sortorder != null" >
+        #{sortorder,jdbcType=DECIMAL},
+      </if>
+      <if test="createPersonId != null" >
+        #{createPersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePersonId != null" >
+        #{updatePersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.patrick.learn.entity.Menu" >
+    update T_MENU
+    <set >
+      <if test="menuName != null" >
+        MENU_NAME = #{menuName,jdbcType=VARCHAR},
+      </if>
+      <if test="menuIcon != null" >
+        MENU_ICON = #{menuIcon,jdbcType=VARCHAR},
+      </if>
+      <if test="menuBackUrl != null" >
+        MENU_BACK_URL = #{menuBackUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnabled != null" >
+        IS_ENABLED = #{isEnabled,jdbcType=VARCHAR},
+      </if>
+      <if test="isChildNode != null" >
+        IS_CHILD_NODE = #{isChildNode,jdbcType=VARCHAR},
+      </if>
+      <if test="superiorMenuId != null" >
+        SUPERIOR_MENU_ID = #{superiorMenuId,jdbcType=VARCHAR},
+      </if>
+      <if test="menuUrl != null" >
+        MENU_URL = #{menuUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null" >
+        PATH = #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="busSysCode != null" >
+        BUS_SYS_CODE = #{busSysCode,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="appcode != null" >
+        APPCODE = #{appcode,jdbcType=VARCHAR},
+      </if>
+      <if test="sortorder != null" >
+        SORTORDER = #{sortorder,jdbcType=DECIMAL},
+      </if>
+      <if test="createPersonId != null" >
+        CREATE_PERSON_ID = #{createPersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePersonId != null" >
+        UPDATE_PERSON_ID = #{updatePersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where MENU_ID = #{menuId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.patrick.learn.entity.Menu" >
+    update T_MENU
+    set MENU_CODE = #{menuCode,jdbcType=VARCHAR},
+      MENU_NAME = #{menuName,jdbcType=VARCHAR},
+      MENU_ICON = #{menuIcon,jdbcType=VARCHAR}, 
+      MENU_BACK_URL = #{menuBackUrl,jdbcType=VARCHAR}, 
+      IS_ENABLED = #{isEnabled,jdbcType=VARCHAR},
+      IS_CHILD_NODE = #{isChildNode,jdbcType=VARCHAR},
+      SUPERIOR_MENU_ID = #{superiorMenuId,jdbcType=VARCHAR},
+      MENU_URL = #{menuUrl,jdbcType=VARCHAR},
+      PATH = #{path,jdbcType=VARCHAR},
+      BUS_SYS_CODE = #{busSysCode,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR},
+      APPCODE = #{appcode,jdbcType=VARCHAR},
+      SORTORDER = #{sortorder,jdbcType=DECIMAL},
+      CREATE_PERSON_ID = #{createPersonId,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      UPDATE_PERSON_ID = #{updatePersonId,jdbcType=VARCHAR},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
+    where MENU_ID = #{menuId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByMenuCode" parameterType="com.patrick.learn.entity.Menu" >
+    update T_MENU
+    set 
+      MENU_NAME = #{menuName,jdbcType=VARCHAR},
+      MENU_ICON = #{menuIcon,jdbcType=VARCHAR}, 
+      MENU_BACK_URL = #{menuBackUrl,jdbcType=VARCHAR}, 
+      IS_ENABLED = #{isEnabled,jdbcType=VARCHAR},
+      IS_CHILD_NODE = #{isChildNode,jdbcType=VARCHAR},
+      SUPERIOR_MENU_ID = #{superiorMenuId,jdbcType=VARCHAR},
+      MENU_URL = #{menuUrl,jdbcType=VARCHAR},
+      PATH = #{path,jdbcType=VARCHAR},
+      BUS_SYS_CODE = #{busSysCode,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR},
+      APPCODE = #{appcode,jdbcType=VARCHAR},
+      SORTORDER = #{sortorder,jdbcType=DECIMAL},
+      CREATE_PERSON_ID = #{createPersonId,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      UPDATE_PERSON_ID = #{updatePersonId,jdbcType=VARCHAR},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
+    where MENU_CODE = #{menuCode,jdbcType=VARCHAR}
+  </update>
+</mapper>

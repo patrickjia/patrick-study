@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.patrick.learn.dao.ISysParamDao" >
+  <resultMap id="BaseResultMap" type="com.patrick.learn.entity.SysParam" >
+    <id column="SYS_PARAM_ID" property="sysParamId" jdbcType="VARCHAR" />
+    <result column="SYS_PARAM_CODE" property="sysParamCode" jdbcType="VARCHAR" />
+    <result column="SYS_PARAM_NAME" property="sysParamName" jdbcType="VARCHAR" />
+    <result column="IS_ENABLED" property="isEnabled" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="SUPERIOR_SYS_PARAM_ID" property="superiorSysParamId" jdbcType="VARCHAR" />
+    <result column="SUPPER_SYS_PARAM_NAME" property="superiorSysParamName" jdbcType="VARCHAR" />
+    <result column="PATH" property="path" jdbcType="VARCHAR" />
+    <result column="BUS_SYS_CODE" property="busSysCode" jdbcType="VARCHAR" />
+    <result column="APPCODE" property="appcode" jdbcType="VARCHAR" />
+    <result column="SORTORDER" property="sortorder" jdbcType="DECIMAL" />
+    <result column="CREATE_PERSON_ID" property="createPersonId" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATE_PERSON_ID" property="updatePersonId" jdbcType="VARCHAR" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    SYS_PARAM_ID, SYS_PARAM_CODE, SYS_PARAM_NAME, IS_ENABLED, DESCRIPTION, SUPERIOR_SYS_PARAM_ID, BUS_SYS_CODE,
+    PATH,  APPCODE, SORTORDER, CREATE_PERSON_ID, CREATE_TIME, UPDATE_PERSON_ID, 
+    UPDATE_TIME,(select t.SYS_PARAM_NAME from T_SYS_PARAM t where t.SYS_PARAM_ID  = a.SUPERIOR_SYS_PARAM_ID) SUPPER_SYS_PARAM_NAME
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_SYS_PARAM a
+    where SYS_PARAM_ID = #{sysParamId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.patrick.learn.entity.SysParam" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_SYS_PARAM a 
+    where a.IS_ENABLED ='0'
+    <if test="sysParamCode != null and sysParamCode!='' " >
+   		and  a.SYS_PARAM_CODE = #{sysParamCode,jdbcType=VARCHAR}
+   	</if>
+   	START WITH SYS_PARAM_ID = #{superiorSysParamId,jdbcType=VARCHAR}
+	CONNECT BY NOCYCLE PRIOR SYS_PARAM_ID = SUPERIOR_SYS_PARAM_ID
+   	order by a.SORTORDER
+  </select>
+  
+  <select id="selectSysParamTree" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from T_SYS_PARAM a 
+    where a.IS_ENABLED ='0'
+   	START WITH SYS_PARAM_ID = '0'
+	CONNECT BY NOCYCLE PRIOR SYS_PARAM_ID = SUPERIOR_SYS_PARAM_ID
+   	order by a.SORTORDER
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from T_SYS_PARAM
+    where SYS_PARAM_ID = #{sysParamId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.patrick.learn.entity.SysParam" >
+    insert into T_SYS_PARAM (SYS_PARAM_ID, SYS_PARAM_CODE, SYS_PARAM_NAME, 
+      IS_ENABLED, DESCRIPTION, SUPERIOR_SYS_PARAM_ID, 
+      PATH,  BUS_SYS_CODE,APPCODE, 
+      SORTORDER, CREATE_PERSON_ID, CREATE_TIME, 
+      UPDATE_PERSON_ID, UPDATE_TIME)
+    values (#{sysParamId,jdbcType=VARCHAR}, #{sysParamCode,jdbcType=VARCHAR}, #{sysParamName,jdbcType=VARCHAR}, 
+      #{isEnabled,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{superiorSysParamId,jdbcType=VARCHAR}, 
+      #{path,jdbcType=VARCHAR},#{busSysCode,jdbcType=VARCHAR}, #{appcode,jdbcType=VARCHAR}, 
+      #{sortorder,jdbcType=DECIMAL}, #{createPersonId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updatePersonId,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.patrick.learn.entity.SysParam" >
+    insert into T_SYS_PARAM
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="sysParamId != null" >
+        SYS_PARAM_ID,
+      </if>
+      <if test="sysParamCode != null" >
+        SYS_PARAM_CODE,
+      </if>
+      <if test="sysParamName != null" >
+        SYS_PARAM_NAME,
+      </if>
+      <if test="isEnabled != null" >
+        IS_ENABLED,
+      </if>
+      <if test="description != null" >
+        DESCRIPTION,
+      </if>
+      <if test="superiorSysParamId != null" >
+        SUPERIOR_SYS_PARAM_ID,
+      </if>
+      <if test="path != null" >
+        PATH,
+      </if>
+      <if test="busSysCode != null" >
+        BUS_SYS_CODE,
+      </if>
+      <if test="appcode != null" >
+        APPCODE,
+      </if>
+      <if test="sortorder != null" >
+        SORTORDER,
+      </if>
+      <if test="createPersonId != null" >
+        CREATE_PERSON_ID,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="updatePersonId != null" >
+        UPDATE_PERSON_ID,
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="sysParamId != null" >
+        #{sysParamId,jdbcType=VARCHAR},
+      </if>
+      <if test="sysParamCode != null" >
+        #{sysParamCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sysParamName != null" >
+        #{sysParamName,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnabled != null" >
+        #{isEnabled,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="superiorSysParamId != null" >
+        #{superiorSysParamId,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null" >
+        #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="busSysCode != null" >
+        #{busSysCode,jdbcType=VARCHAR},
+      </if>
+      <if test="appcode != null" >
+        #{appcode,jdbcType=VARCHAR},
+      </if>
+      <if test="sortorder != null" >
+        #{sortorder,jdbcType=DECIMAL},
+      </if>
+      <if test="createPersonId != null" >
+        #{createPersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePersonId != null" >
+        #{updatePersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.patrick.learn.entity.SysParam" >
+    update T_SYS_PARAM
+    <set >
+      <if test="sysParamCode != null" >
+        SYS_PARAM_CODE = #{sysParamCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sysParamName != null" >
+        SYS_PARAM_NAME = #{sysParamName,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnabled != null" >
+        IS_ENABLED = #{isEnabled,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="superiorSysParamId != null" >
+        SUPERIOR_SYS_PARAM_ID = #{superiorSysParamId,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null" >
+        PATH = #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="busSysCode != null" >
+        BUS_SYS_CODE = #{busSysCode,jdbcType=VARCHAR},
+      </if>
+      <if test="appcode != null" >
+        APPCODE = #{appcode,jdbcType=VARCHAR},
+      </if>
+      <if test="sortorder != null" >
+        SORTORDER = #{sortorder,jdbcType=DECIMAL},
+      </if>
+      <if test="createPersonId != null" >
+        CREATE_PERSON_ID = #{createPersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePersonId != null" >
+        UPDATE_PERSON_ID = #{updatePersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where SYS_PARAM_ID = #{sysParamId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.patrick.learn.entity.SysParam" >
+    update T_SYS_PARAM
+    set SYS_PARAM_CODE = #{sysParamCode,jdbcType=VARCHAR},
+      SYS_PARAM_NAME = #{sysParamName,jdbcType=VARCHAR},
+      IS_ENABLED = #{isEnabled,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR},
+      SUPERIOR_SYS_PARAM_ID = #{superiorSysParamId,jdbcType=VARCHAR},
+      PATH = #{path,jdbcType=VARCHAR},
+      BUS_SYS_CODE = #{busSysCode,jdbcType=VARCHAR},
+      APPCODE = #{appcode,jdbcType=VARCHAR},
+      SORTORDER = #{sortorder,jdbcType=DECIMAL},
+      CREATE_PERSON_ID = #{createPersonId,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      UPDATE_PERSON_ID = #{updatePersonId,jdbcType=VARCHAR},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
+    where SYS_PARAM_ID = #{sysParamId,jdbcType=VARCHAR}
+  </update>
+</mapper>

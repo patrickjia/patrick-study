@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.patrick.learn.dao.IBusSystemDao" >
+  <resultMap id="BaseResultMap" type="com.patrick.learn.entity.BusSystem" >
+    <id column="BUS_SYS_ID" property="busSysId" jdbcType="VARCHAR" />
+    <result column="BUS_SYS_CODE" property="busSysCode" jdbcType="VARCHAR" />
+    <result column="BUS_SYS_NAME" property="busSysName" jdbcType="VARCHAR" />
+    <result column="BUS_SYS_SECRET" property="busSysSecret" jdbcType="VARCHAR" />
+    <result column="IS_ENABLED" property="isEnabled" jdbcType="VARCHAR" />
+    <result column="BUS_SYS_URL" property="busSysUrl" jdbcType="VARCHAR" />
+    <result column="BUS_SYS_ICON" property="busSysIcon" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="APPCODE" property="appcode" jdbcType="VARCHAR" />
+    <result column="APPCODE_NAME" property="appcodeName" jdbcType="VARCHAR" />
+    <result column="CREATE_PERSON_ID" property="createPersonId" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATE_PERSON_ID" property="updatePersonId" jdbcType="VARCHAR" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+	BUS_SYS_ID,
+	BUS_SYS_CODE,
+	BUS_SYS_NAME,
+	BUS_SYS_SECRET,
+	BUS_SYS_URL,
+	BUS_SYS_ICON,
+	IS_ENABLED,
+	DESCRIPTION,
+	APPCODE,
+	CREATE_PERSON_ID,
+	CREATE_TIME,
+	UPDATE_PERSON_ID,
+	UPDATE_TIME
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    SELECT
+		A.BUS_SYS_ID,
+		A.BUS_SYS_CODE,
+		A.BUS_SYS_NAME,
+		A.BUS_SYS_SECRET,
+		A.BUS_SYS_URL,
+		A.BUS_SYS_ICON,
+		A.IS_ENABLED,
+		A.DESCRIPTION,
+		A.APPCODE,
+		b.DEPT_NAME APPCODE_NAME,
+		A.CREATE_PERSON_ID,
+		A.CREATE_TIME,
+		A.UPDATE_PERSON_ID,
+		A.UPDATE_TIME
+	FROM
+		T_BUS_SYSTEM_INFO A LEFT JOIN T_DEPARTMENT b 
+		ON A.APPCODE = b.DEPT_CODE
+	WHERE 1=1
+    and BUS_SYS_ID = #{busSysId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.patrick.learn.entity.BusSystem" >
+    SELECT
+		A.BUS_SYS_ID,
+		A.BUS_SYS_CODE,
+		A.BUS_SYS_NAME,
+		A.BUS_SYS_SECRET,
+		A.BUS_SYS_ICON,
+		A.BUS_SYS_URL,
+		A.IS_ENABLED,
+		A.DESCRIPTION,
+		A.APPCODE,
+		b.DEPT_NAME APPCODE_NAME,
+		A.CREATE_PERSON_ID,
+		A.CREATE_TIME,
+		A.UPDATE_PERSON_ID,
+		A.UPDATE_TIME
+	FROM
+		T_BUS_SYSTEM_INFO A LEFT JOIN
+		T_DEPARTMENT b
+		ON 	A.APPCODE = b.DEPT_CODE
+		where 1=1
+<!-- 	AND A.IS_ENABLED = '0' -->
+<!-- 	AND b.IS_ENABLED = '0' -->
+    <if test="busSysId != null and busSysId != '' " >
+   		and  a.BUS_SYS_ID = #{busSysId,jdbcType=VARCHAR}
+   	</if>
+   	<if test="busSysCode != null and busSysCode != '' " >
+   		and  a.BUS_SYS_CODE = #{busSysCode,jdbcType=VARCHAR}
+   	</if>
+   	<if test="busSysName != null and busSysName != '' " >
+   		and  a.BUS_SYS_NAME LIKE concat(concat('%',#{busSysName}),'%')
+   	</if>
+   	<if test="appcode != null and appcode != '' " >
+   		and  a.APPCODE = #{appcode,jdbcType=VARCHAR}
+   	</if>
+   	order by A.BUS_SYS_CODE desc
+  </select>
+  
+  <select id="getAppcodeFromBusSytem" resultMap="BaseResultMap" parameterType="com.patrick.learn.entity.BusSystem" >
+    SELECT
+		a.APPCODE,b.DEPT_NAME APPCODE_NAME
+	FROM
+		T_BUS_SYSTEM_INFO A,
+		T_DEPARTMENT b
+	WHERE
+	a.APPCODE = b.DEPT_CODE
+	AND A .IS_ENABLED = '0'
+    <if test="busSysId != null and busSysId != '' " >
+   		and  a.BUS_SYS_ID = #{busSysId,jdbcType=VARCHAR}
+   	</if>
+   	<if test="busSysCode != null and busSysCode != '' " >
+   		and  a.BUS_SYS_CODE = #{busSysCode,jdbcType=VARCHAR}
+   	</if>
+   	<if test="busSysName != null and busSysName != '' " >
+   		and  a.BUS_SYS_NAME = #{busSysName,jdbcType=VARCHAR}
+   	</if>
+   	GROUP BY
+		a.APPCODE,b.DEPT_NAME
+  </select>
+  
+  <select id="getBusSystemByPerson" resultMap="BaseResultMap" parameterType="java.lang.String">
+	  SELECT DISTINCT 
+		e.BUS_SYS_ID,
+		e.BUS_SYS_CODE,
+		e.BUS_SYS_NAME,
+		e.BUS_SYS_URL,
+		e.BUS_SYS_ICON,
+		e.IS_ENABLED,
+		e.DESCRIPTION 
+	from T_PERSON_NORMAL a,
+		RE_PERSON_ROLE b,
+		RE_ROLE_MENU c,
+		T_MENU d,
+		T_BUS_SYSTEM_INFO e
+	where a.PERSON_ID = b.PERSON_ID
+	and b.ROLE_ID = c.ROLE_ID
+	and c.MENU_ID = d.MENU_ID
+	and d.BUS_SYS_CODE = e.BUS_SYS_CODE
+	and a.PERSON_CODE = #{personCode,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from T_BUS_SYSTEM_INFO
+    where BUS_SYS_ID = #{busSysId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.patrick.learn.entity.BusSystem" >
+    insert into T_BUS_SYSTEM_INFO (BUS_SYS_ID,
+	BUS_SYS_CODE,
+	BUS_SYS_NAME,
+	BUS_SYS_SECRET,
+	IS_ENABLED,
+	BUS_SYS_URL,
+	DESCRIPTION,
+	APPCODE,
+	CREATE_PERSON_ID,
+	CREATE_TIME,
+	UPDATE_PERSON_ID,
+	UPDATE_TIME,
+	BUS_SYS_ICON)
+    values (#{busSysId,jdbcType=VARCHAR}, #{busSysCode,jdbcType=VARCHAR}, #{busSysName,jdbcType=VARCHAR}, 
+      #{busSysSecret,jdbcType=VARCHAR}, #{isEnabled,jdbcType=VARCHAR}, #{busSysUrl,jdbcType=VARCHAR}, 
+      #{description,jdbcType=VARCHAR}, #{appcode,jdbcType=VARCHAR}, #{createPersonId,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=DECIMAL}, #{updatePersonId,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{busSysIcon,jdbcType=VARCHAR}
+  </insert>
+  <insert id="insertSelective" parameterType="com.patrick.learn.entity.BusSystem" >
+    insert into T_BUS_SYSTEM_INFO
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+    <if test="busSysId != null" >
+        BUS_SYS_ID,
+      </if>
+      <if test="busSysCode != null" >
+        BUS_SYS_CODE,
+      </if>
+      <if test="busSysName != null" >
+        BUS_SYS_NAME,
+      </if>
+      <if test="busSysSecret != null" >
+        BUS_SYS_SECRET,
+      </if>
+      <if test="isEnabled != null" >
+        IS_ENABLED,
+      </if>
+      <if test="busSysUrl != null" >
+        BUS_SYS_URL,
+      </if>
+      <if test="description != null" >
+        DESCRIPTION,
+      </if>
+      <if test="appcode != null" >
+        APPCODE,
+      </if>
+      <if test="createPersonId != null" >
+        CREATE_PERSON_ID,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="updatePersonId != null" >
+        UPDATE_PERSON_ID,
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME,
+      </if>
+      <if test="busSysIcon != null" >
+        BUS_SYS_ICON,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="busSysId != null" >
+        #{busSysId,jdbcType=VARCHAR},
+      </if>
+      <if test="busSysCode != null" >
+        #{busSysCode,jdbcType=VARCHAR},
+      </if>
+      <if test="busSysName != null" >
+        #{busSysName,jdbcType=VARCHAR},
+      </if>
+      <if test="busSysSecret != null" >
+        #{busSysSecret,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnabled != null" >
+        #{isEnabled,jdbcType=VARCHAR},
+      </if>
+      <if test="busSysUrl != null" >
+        #{busSysUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="appcode != null" >
+        #{appcode,jdbcType=VARCHAR},
+      </if>
+      <if test="createPersonId != null" >
+        #{createPersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePersonId != null" >
+        #{updatePersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="busSysIcon != null" >
+        #{busSysIcon,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.patrick.learn.entity.BusSystem" >
+    update T_BUS_SYSTEM_INFO
+    <set >
+      <if test="busSysId != null" >
+        BUS_SYS_ID = #{busSysId,jdbcType=VARCHAR},
+      </if>
+      <if test="busSysCode != null" >
+        BUS_SYS_CODE = #{busSysCode,jdbcType=VARCHAR},
+      </if>
+      <if test="busSysName != null" >
+        BUS_SYS_NAME = #{busSysName,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnabled != null" >
+        IS_ENABLED = #{isEnabled,jdbcType=VARCHAR},
+      </if>
+      <if test="busSysUrl != null" >
+        BUS_SYS_URL = #{busSysUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="appcode != null" >
+        APPCODE = #{appcode,jdbcType=VARCHAR},
+      </if>
+      <if test="createPersonId != null" >
+        CREATE_PERSON_ID = #{createPersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePersonId != null" >
+        UPDATE_PERSON_ID = #{updatePersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="busSysIcon != null" >
+        BUS_SYS_ICON = #{busSysIcon,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where BUS_SYS_ID = #{busSysId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.patrick.learn.entity.BusSystem" >
+    update T_BUS_SYSTEM_INFO
+    set 
+      BUS_SYS_CODE = #{busSysName,jdbcType=VARCHAR},
+      BUS_SYS_NAME = #{busSysSecret,jdbcType=VARCHAR},
+      BUS_SYS_SECRET = #{isEnabled,jdbcType=VARCHAR},
+      IS_ENABLED = #{isEnabled,jdbcType=VARCHAR},
+      BUS_SYS_URL = #{busSysUrl,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR},
+      APPCODE = #{appcode,jdbcType=VARCHAR},
+      CREATE_PERSON_ID = #{createPersonId,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      UPDATE_PERSON_ID = #{updatePersonId,jdbcType=VARCHAR},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      BUS_SYS_ICON = #{busSysIcon,jdbcType=VARCHAR}
+    where BUS_SYS_ID = #{busSysId,jdbcType=VARCHAR}
+  </update>
+</mapper>

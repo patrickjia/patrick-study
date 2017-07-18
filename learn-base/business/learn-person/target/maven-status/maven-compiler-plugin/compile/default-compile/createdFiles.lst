@@ -1,0 +1,7 @@
+com/patrick/learn/service/impl/UserServiceImpl.class
+com/patrick/learn/person/App.class
+com/patrick/learn/service/IUserService.class
+com/patrick/learn/entity/PersonRole.class
+com/patrick/learn/entity/Person.class
+com/patrick/learn/dao/IUserDao.class
+com/patrick/learn/entity/BaseMenu.class

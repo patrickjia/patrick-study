@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.patrick.learn</groupId>
+    <artifactId>learn-base</artifactId>
+    <version>0.0.1</version>
+  </parent>
+  <groupId>com.patrick.learn</groupId>
+  <artifactId>business</artifactId>
+  <version>0.0.1</version>
+  <name>business</name>
+  <url>http://maven.apache.org</url>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <packaging>pom</packaging>
+  <modules>
+  	<module>learn-person</module>
+  	<module>learn-department</module>
+  	<module>learn-postion</module>
+  	<module>learn-role</module>
+    <module>learn-menu</module>
+    <module>learn-common</module>
+    <module>learn-data-dictionary</module>
+    <module>learn-system-code</module>
+    <module>learn-business-system</module>
+  </modules>
+</project>

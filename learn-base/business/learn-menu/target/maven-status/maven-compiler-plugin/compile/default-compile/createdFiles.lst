@@ -1,0 +1,6 @@
+com/patrick/learn/entity/Function.class
+com/patrick/learn/service/IMenusService.class
+com/patrick/learn/service/impl/MenusServiceImpl.class
+com/patrick/learn/dao/IFunctionDao.class
+com/patrick/learn/dao/IMenuDao.class
+com/patrick/learn/entity/Menu.class

@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.patrick.learn.dao.IRoleDao" >
+  <resultMap id="BaseResultMap" type="com.patrick.learn.entity.Role" >
+    <id column="ROLE_ID" property="roleId" jdbcType="VARCHAR" />
+    <result column="ROLE_CODE" property="roleCode" jdbcType="VARCHAR" />
+    <result column="ROLE_NAME" property="roleName" jdbcType="VARCHAR" />
+    <result column="IS_ENABLED" property="isEnabled" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="APPCODE" property="appcode" jdbcType="VARCHAR" />
+    <result column="APPCODE_NAME" property="appcodeName" jdbcType="VARCHAR" />
+    <result column="SORTORDER" property="sortorder" jdbcType="DECIMAL" />
+    <result column="CREATE_PERSON_ID" property="createPersonId" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATE_PERSON_ID" property="updatePersonId" jdbcType="VARCHAR" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <resultMap id="queryRoleMenuFuncMap" type="com.patrick.learn.entity.Role"> 
+  		<id column="ROLE_ID" property="roleId" jdbcType="VARCHAR" />
+	    <result column="ROLE_CODE" property="roleCode" jdbcType="VARCHAR" />
+	    <result column="ROLE_NAME" property="roleName" jdbcType="VARCHAR" />
+	    <result column="IS_ENABLED" property="isEnabled" jdbcType="VARCHAR" />
+	    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+	    <result column="APPCODE" property="appcode" jdbcType="VARCHAR" />
+	    <result column="SORTORDER" property="sortorder" jdbcType="DECIMAL" />
+	    <collection property="menus" javaType="java.util.List" ofType="com.patrick.learn.entity.Menu">
+	        <id column="MENU_ID" property="menuId" jdbcType="VARCHAR" />
+		    <result column="MENU_CODE" property="menuCode" jdbcType="VARCHAR" />
+		    <result column="MENU_NAME" property="menuName" jdbcType="VARCHAR" />
+		    <result column="IS_ENABLED" property="isEnabled" jdbcType="VARCHAR" />
+		    <result column="IS_CHILD_NODE" property="isChildNode" jdbcType="VARCHAR" />
+		    <result column="SUPERIOR_MENU_ID" property="superiorMenuId" jdbcType="VARCHAR" />
+		    <result column="MENU_URL" property="menuUrl" jdbcType="VARCHAR" />
+		    <result column="PATH" property="path" jdbcType="VARCHAR" />
+		    <result column="BUS_SYS_CODE" property="busSysCode" jdbcType="VARCHAR" />
+		    <result column="menuDescription" property="description" jdbcType="VARCHAR" />
+		    <result column="menuAppcode" property="appcode" jdbcType="VARCHAR" />
+		    <result column="menuSortorder" property="sortorder" jdbcType="DECIMAL" />
+		    <collection property="functionList" javaType="java.util.List" ofType="com.patrick.learn.entity.Function">  
+	            <id column="FUNCTION_ID" property="functionId" jdbcType="VARCHAR" />
+			    <result column="FUNCTION_CODE" property="functionCode" jdbcType="VARCHAR" />
+			    <result column="FUNCTION_NAME" property="functionName" jdbcType="VARCHAR" />
+			    <result column="MENU_ID" property="menuId" jdbcType="VARCHAR" />
+			    <result column="IS_ENABLED" property="isEnabled" jdbcType="VARCHAR" />
+			    <result column="functionDescription" property="description" jdbcType="VARCHAR" />
+			    <result column="functionAppcode" property="appcode" jdbcType="VARCHAR" />
+			    <result column="functionSortorder" property="sortorder" jdbcType="DECIMAL" />
+        	</collection> 
+	    </collection> 
+    </resultMap>
+  <sql id="Base_Column_List" >
+    ROLE_ID, ROLE_CODE, ROLE_NAME, IS_ENABLED, DESCRIPTION, APPCODE, SORTORDER, CREATE_PERSON_ID, 
+    CREATE_TIME, UPDATE_PERSON_ID, UPDATE_TIME
+  </sql>
+  
+  <sql id="ROLE_MENU_FUNC_Column_List" >
+  	R.ROLE_ID,
+	R.ROLE_CODE,
+	R.ROLE_NAME,
+	R.IS_ENABLED,
+	R.DESCRIPTION,
+	R.APPCODE,
+	R.SORTORDER,
+	M .MENU_ID,
+	M .MENU_CODE,
+	M .MENU_NAME,
+	M .IS_CHILD_NODE,
+	M .SUPERIOR_MENU_ID,
+	M .MENU_URL,
+	M .BUS_SYS_CODE,
+	M .DESCRIPTION menuDescription,
+	M .APPCODE menuAppcode,
+	M .SORTORDER menuSortorder,
+	F.FUNCTION_ID,
+	F.FUNCTION_CODE,
+	F.FUNCTION_NAME,
+	F.DESCRIPTION functionDescription,
+	F.APPCODE functionAppcode,
+	F.SORTORDER functionSortorder
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+	    A.ROLE_ID,
+		A.ROLE_CODE,
+		A.ROLE_NAME,
+		A.IS_ENABLED,
+		A.DESCRIPTION,
+		A.APPCODE,
+		A.SORTORDER,
+		A.CREATE_PERSON_ID,
+		A.CREATE_TIME,
+		A.UPDATE_PERSON_ID,
+		A.UPDATE_TIME,
+		b.DEPT_NAME APPCODE_NAME
+    FROM T_ROLE A LEFT JOIN
+		T_DEPARTMENT b
+	ON A.APPCODE = b.DEPT_CODE
+    WHERE ROLE_ID = #{roleId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.patrick.learn.entity.Role" >
+    select 
+	    A.ROLE_ID,
+		A.ROLE_CODE,
+		A.ROLE_NAME,
+		A.IS_ENABLED,
+		A.DESCRIPTION,
+		A.APPCODE,
+		A.SORTORDER,
+		A.CREATE_PERSON_ID,
+		A.CREATE_TIME,
+		A.UPDATE_PERSON_ID,
+		A.UPDATE_TIME,
+		b.DEPT_NAME APPCODE_NAME
+    FROM T_ROLE A LEFT JOIN
+		T_DEPARTMENT b
+	ON A.APPCODE = b.DEPT_CODE
+    WHERE 1=1
+<!--     A.IS_ENABLED ='0' -->
+    <if test="roleId != null and roleId !='' " >
+   		and a.ROLE_ID = #{roleId,jdbcType=VARCHAR}
+   	</if>
+   	<if test="roleName != null and roleName !='' " >
+   		and a.ROLE_NAME like  '%'||#{roleName,jdbcType=VARCHAR}||'%'
+   	</if>
+   	<if test="roleCode != null and roleCode !='' " >
+   		and a.ROLE_CODE = #{roleCode,jdbcType=VARCHAR}
+   	</if>
+   	<if test="appcode != null and appcode !='' " >
+   		and a.APPCODE = #{appcode,jdbcType=VARCHAR}
+   	</if>
+   	ORDER BY  A.SORTORDER ASC
+  </select>
+  
+  <select id="selectRoleIdListByPersonId" resultType="java.lang.String" parameterType="java.lang.String">
+    SELECT A .ROLE_ID 
+        FROM RE_PERSON_ROLE A
+    WHERE A .PERSON_ID = #{personId,jdbcType=VARCHAR}
+    UNION 
+	SELECT b.ROLE_ID FROM RE_ROLE_GROUP_PERSON a,RE_ROLE_GROUP_ROLE b
+	WHERE a.ROLE_GROUP_ID = b.ROLE_GROUP_ID
+	AND a.PERSON_ID = #{personId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectRoleByPerson" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    SELECT
+	    R.ROLE_ID,
+	    R.ROLE_CODE,
+	    R.ROLE_NAME,
+	    R.IS_ENABLED,
+	    R.DESCRIPTION,
+	    R.APPCODE,
+	    R.SORTORDER,
+	    R.CREATE_PERSON_ID,
+	    R.CREATE_TIME,
+	    R.UPDATE_PERSON_ID,
+	    R.UPDATE_TIME
+	FROM
+	    T_ROLE r,
+	    RE_PERSON_ROLE rp
+	WHERE
+	    r.ROLE_ID = RP.ROLE_ID
+	AND r.IS_ENABLED = '0'
+	AND rp.PERSON_ID = #{personId,jdbcType=VARCHAR}
+	UNION 
+	SELECT
+	    R.ROLE_ID,
+	    R.ROLE_CODE,
+	    R.ROLE_NAME,
+	    R.IS_ENABLED,
+	    R.DESCRIPTION,
+	    R.APPCODE,
+	    R.SORTORDER,
+	    R.CREATE_PERSON_ID,
+	    R.CREATE_TIME,
+	    R.UPDATE_PERSON_ID,
+	    R.UPDATE_TIME
+	FROM
+	    T_ROLE r,
+	    RE_ROLE_GROUP_ROLE rr, 
+	    RE_ROLE_GROUP_PERSON rp
+	WHERE
+	    r.ROLE_ID = rr.ROLE_ID
+	AND rr.ROLE_GROUP_ID = rp.ROLE_GROUP_ID
+	AND r.IS_ENABLED = '0'
+	AND rp.PERSON_ID = #{personId,jdbcType=VARCHAR}
+    
+  </select>
+  
+  <select id="selectMenuFunction" resultType="com.patrick.learn.entity.Menu" >
+  	SELECT
+		A .BUS_SYS_NAME,
+		b.*, c.FUNCTION_ID,
+		c.FUNCTION_CODE,
+		c.FUNCTION_NAME
+	FROM
+		T_BUS_SYSTEM_INFO A,
+		T_MENU b,
+		T_FUNCTION c
+	WHERE
+		A .BUS_SYS_CODE = b.BUS_SYS_CODE
+	AND b.MENU_ID = c.MENU_ID
+	AND a.IS_ENABLED = 0
+	AND b.IS_ENABLED = 0
+	AND c.IS_ENABLED = 0
+  </select>
+  
+  <select id="selectRoleByContion" resultMap="BaseResultMap" parameterType="com.patrick.learn.entity.Role" >
+    select
+    <include refid="Base_Column_List" />
+    from t_role R
+    where R.IS_ENABLED='0'
+    <if test="roleId != null and roleId!='' " >
+   	and  R.ROLE_ID = #{roleId,jdbcType=VARCHAR}
+   	</if>
+    <if test="roleCode != null and roleCode!='' " >
+   	and  R.ROLE_CODE = #{roleCode,jdbcType=VARCHAR}
+   	</if>
+   	<if test="roleName != null and roleName!='' " >
+   	and  R.ROLE_NAME like '%'||#{roleName,jdbcType=VARCHAR}||'%'
+   	</if>
+   	<if test="appcode != null and appcode!='' " >
+   	and  R.APPCODE = #{appcode,jdbcType=VARCHAR}
+   	</if>
+   	order by R.SORTORDER
+  </select>
+  
+  <select id="selectRoleMenuByContion" resultMap="queryRoleMenuFuncMap" parameterType="com.patrick.learn.entity.Role" >
+    select 
+    <include refid="ROLE_MENU_FUNC_Column_List" />
+    from t_role R
+	left join re_role_menu RM on R.role_id=RM.role_id
+	left join t_menu M on RM.menu_id=M.menu_id
+	left join t_function F on M.menu_id=F.menu_id
+    where R.IS_ENABLED='0'
+    <if test="roleId != null and roleId!='' " >
+   	and  R.ROLE_ID = #{roleId,jdbcType=VARCHAR}
+   	</if>
+    <if test="roleCode != null and roleCode!='' " >
+   	and  R.ROLE_CODE = #{roleCode,jdbcType=VARCHAR}
+   	</if>
+   	<if test="roleName != null and roleName!='' " >
+   	and  R.ROLE_NAME like '%'||#{roleName,jdbcType=VARCHAR}||'%'
+   	</if>
+   	<if test="appcode != null and appcode!='' " >
+   	and  R.APPCODE = #{appcode,jdbcType=VARCHAR}
+   	</if>
+   	order by R.SORTORDER
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from T_ROLE
+    where ROLE_ID = #{roleId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.patrick.learn.entity.Role" >
+    insert into T_ROLE (ROLE_ID, ROLE_CODE, ROLE_NAME, 
+      IS_ENABLED, DESCRIPTION, APPCODE, 
+      SORTORDER, CREATE_PERSON_ID, CREATE_TIME, 
+      UPDATE_PERSON_ID, UPDATE_TIME)
+    values (#{roleId,jdbcType=VARCHAR}, #{roleCode,jdbcType=VARCHAR}, #{roleName,jdbcType=VARCHAR}, 
+      #{isEnabled,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{appcode,jdbcType=VARCHAR}, 
+      #{sortorder,jdbcType=DECIMAL}, #{createPersonId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updatePersonId,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.patrick.learn.entity.Role" >
+    insert into T_ROLE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="roleId != null" >
+        ROLE_ID,
+      </if>
+      <if test="roleCode != null" >
+        ROLE_CODE,
+      </if>
+      <if test="roleName != null" >
+        ROLE_NAME,
+      </if>
+      <if test="isEnabled != null" >
+        IS_ENABLED,
+      </if>
+      <if test="description != null" >
+        DESCRIPTION,
+      </if>
+      <if test="appcode != null" >
+        APPCODE,
+      </if>
+      <if test="sortorder != null" >
+        SORTORDER,
+      </if>
+      <if test="createPersonId != null" >
+        CREATE_PERSON_ID,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="updatePersonId != null" >
+        UPDATE_PERSON_ID,
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="roleId != null" >
+        #{roleId,jdbcType=VARCHAR},
+      </if>
+      <if test="roleCode != null" >
+        #{roleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="roleName != null" >
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnabled != null" >
+        #{isEnabled,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="appcode != null" >
+        #{appcode,jdbcType=VARCHAR},
+      </if>
+      <if test="sortorder != null" >
+        #{sortorder,jdbcType=DECIMAL},
+      </if>
+      <if test="createPersonId != null" >
+        #{createPersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePersonId != null" >
+        #{updatePersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.patrick.learn.entity.Role" >
+    update T_ROLE
+    <set >
+      <if test="roleName != null" >
+        ROLE_NAME = #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnabled != null" >
+        IS_ENABLED = #{isEnabled,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="appcode != null" >
+        APPCODE = #{appcode,jdbcType=VARCHAR},
+      </if>
+      <if test="sortorder != null" >
+        SORTORDER = #{sortorder,jdbcType=DECIMAL},
+      </if>
+      <if test="createPersonId != null" >
+        CREATE_PERSON_ID = #{createPersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePersonId != null" >
+        UPDATE_PERSON_ID = #{updatePersonId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ROLE_ID = #{roleId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.patrick.learn.entity.Role" >
+    update T_ROLE
+    set ROLE_CODE = #{roleCode,jdbcType=VARCHAR},
+      ROLE_NAME = #{roleName,jdbcType=VARCHAR},
+      IS_ENABLED = #{isEnabled,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR},
+      APPCODE = #{appcode,jdbcType=VARCHAR},
+      SORTORDER = #{sortorder,jdbcType=DECIMAL},
+      CREATE_PERSON_ID = #{createPersonId,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      UPDATE_PERSON_ID = #{updatePersonId,jdbcType=VARCHAR},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
+    where ROLE_ID = #{roleId,jdbcType=VARCHAR}
+  </update>
+</mapper>
